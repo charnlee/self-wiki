@@ -3,7 +3,9 @@
 # ====================
 FROM node:24-alpine AS assets
 
-RUN apk add yarn g++ make cmake python3 --no-cache
+RUN sed -i 's#https://dl-cdn.alpinelinux.org/alpine#https://mirrors.aliyun.com/alpine#g' /etc/apk/repositories && \
+    apk add yarn g++ make cmake python3 --no-cache && \
+    yarn config set registry https://registry.npmmirror.com
 
 WORKDIR /wiki
 
@@ -28,7 +30,8 @@ RUN yarn patch-package
 FROM node:24-alpine
 LABEL maintainer="requarks.io"
 
-RUN apk add bash curl git openssh gnupg sqlite --no-cache && \
+RUN sed -i 's#https://dl-cdn.alpinelinux.org/alpine#https://mirrors.aliyun.com/alpine#g' /etc/apk/repositories && \
+    apk add bash curl git openssh gnupg sqlite --no-cache && \
     mkdir -p /wiki && \
     mkdir -p /logs && \
     mkdir -p /wiki/data/content && \
