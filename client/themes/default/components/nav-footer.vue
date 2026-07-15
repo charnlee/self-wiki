@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-footer.justify-center(:color='bgColor', inset)
+  v-footer.nav-footer-modern.justify-center(:color='bgColor', inset)
     .caption.grey--text(:class='$vuetify.theme.dark ? `text--lighten-1` : `text--darken-1`')
       template(v-if='footerOverride')
         span(v-html='footerOverrideRender + ` |&nbsp;`')

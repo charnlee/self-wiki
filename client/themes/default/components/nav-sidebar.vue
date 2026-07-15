@@ -1,6 +1,6 @@
 <template lang="pug">
-  div
-    .pa-3.d-flex(v-if='navMode === `MIXED`', :class='$vuetify.theme.dark ? `grey darken-5` : `blue darken-3`')
+  .nav-sidebar-modern
+    .nav-sidebar-switcher.pa-3.d-flex(v-if='navMode === `MIXED`', :class='$vuetify.theme.dark ? `grey darken-5` : `blue darken-3`')
       v-btn(
         depressed
         :color='$vuetify.theme.dark ? `grey darken-4` : `blue darken-2`'

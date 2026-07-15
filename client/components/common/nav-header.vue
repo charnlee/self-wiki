@@ -1,12 +1,12 @@
 <template lang='pug'>
-  v-app-bar.nav-header(color='black', dark, app, :clipped-left='!$vuetify.rtl', :clipped-right='$vuetify.rtl', fixed, flat, :extended='searchIsShown && $vuetify.breakpoint.smAndDown')
-    v-toolbar(color='deep-purple', flat, slot='extension', v-if='searchIsShown && $vuetify.breakpoint.smAndDown')
+  v-app-bar.nav-header(color='white', light, app, :clipped-left='!$vuetify.rtl', :clipped-right='$vuetify.rtl', fixed, flat, :extended='searchIsShown && $vuetify.breakpoint.smAndDown')
+    v-toolbar.nav-header-mobile-search(color='white', flat, slot='extension', v-if='searchIsShown && $vuetify.breakpoint.smAndDown')
       v-text-field(
         ref='searchFieldMobile'
         v-model='search'
         clearable
-        background-color='deep-purple'
-        color='white'
+        background-color='white'
+        color='blue'
         :label='$t(`common:header.search`)'
         single-line
         solo
@@ -19,9 +19,9 @@
       )
     v-layout(row)
       v-flex(xs5, md4)
-        v-toolbar.nav-header-inner(color='black', dark, flat, :class='$vuetify.rtl ? `pr-3` : `pl-3`')
-          v-avatar(tile, size='34', @click='goHome')
-            v-img.org-logo(:src='logoUrl')
+        v-toolbar.nav-header-inner(color='white', light, flat, :class='$vuetify.rtl ? `pr-3` : `pl-3`')
+          v-avatar.nav-header-logo(tile, size='38', @click='goHome')
+            img.org-logo(:src='topLogoUrl', alt='Self Wiki')
           //- v-menu(open-on-hover, offset-y, bottom, left, min-width='250', transition='slide-y-transition')
           //-   template(v-slot:activator='{ on }')
           //-     v-app-bar-nav-icon.btn-animate-app(v-on='on', :class='$vuetify.rtl ? `mx-0` : ``')
@@ -46,14 +46,14 @@
           v-toolbar-title(:class='{ "mx-3": $vuetify.breakpoint.mdAndUp, "mx-1": $vuetify.breakpoint.smAndDown }')
             span.subheading {{title}}
       v-flex(md4, v-if='$vuetify.breakpoint.mdAndUp')
-        v-toolbar.nav-header-inner(color='black', dark, flat)
+        v-toolbar.nav-header-inner(color='white', light, flat)
           slot(name='mid')
             transition(name='navHeaderSearch', v-if='searchIsShown')
               v-text-field(
                 ref='searchField',
                 v-if='searchIsShown && $vuetify.breakpoint.mdAndUp',
                 v-model='search',
-                color='white',
+                color='blue',
                 :label='$t(`common:header.search`)',
                 single-line,
                 solo
@@ -73,10 +73,10 @@
             v-tooltip(bottom)
               template(v-slot:activator='{ on }')
                 v-btn.ml-2.mr-0(icon, v-on='on', href='/t', :aria-label='$t(`common:header.browseTags`)')
-                  v-icon(color='grey') mdi-tag-multiple
+                  v-icon(color='blue-grey') mdi-tag-multiple
               span {{$t('common:header.browseTags')}}
       v-flex(xs7, md4)
-        v-toolbar.nav-header-inner.pr-4(color='black', dark, flat)
+        v-toolbar.nav-header-inner.pr-4(color='white', light, flat)
           v-spacer
           .navHeaderLoading.mr-3
             v-progress-circular(indeterminate, color='blue', :size='22', :width='2' v-show='isLoading')
@@ -90,7 +90,7 @@
             @click='searchToggle'
             icon
             )
-            v-icon(color='grey') mdi-magnify
+            v-icon(color='blue-grey') mdi-magnify
 
           //- LANGUAGES
 
@@ -108,7 +108,7 @@
                       height='64'
                       :aria-label='$t(`common:header.language`)'
                       )
-                      v-icon(color='grey') mdi-web
+                      v-icon(color='blue-grey') mdi-web
                   span {{$t('common:header.language')}}
               v-list(nav)
                 template(v-for='(lc, idx) of locales')
@@ -133,7 +133,7 @@
                       height='64'
                       :aria-label='$t(`common:header.pageActions`)'
                       )
-                      v-icon(color='grey') mdi-file-document-edit-outline
+                      v-icon(color='blue-grey') mdi-file-document-edit-outline
                   span {{$t('common:header.pageActions')}}
               v-list(nav, :light='!$vuetify.theme.dark', :dark='$vuetify.theme.dark', :class='$vuetify.theme.dark ? `grey darken-4` : ``')
                 .overline.pa-4.grey--text {{$t('common:header.currentPage')}}
@@ -171,7 +171,7 @@
             v-tooltip(bottom)
               template(v-slot:activator='{ on }')
                 v-btn(icon, tile, height='64', v-on='on', @click='pageNew', :aria-label='$t(`common:header.newPage`)')
-                  v-icon(color='grey') mdi-text-box-plus-outline
+                  v-icon(color='blue-grey') mdi-text-box-plus-outline
               span {{$t('common:header.newPage')}}
             v-divider(vertical)
 
@@ -181,10 +181,10 @@
             v-tooltip(bottom, v-if='mode !== `admin`')
               template(v-slot:activator='{ on }')
                 v-btn(icon, tile, height='64', v-on='on', href='/a', :aria-label='$t(`common:header.admin`)')
-                  v-icon(color='grey') mdi-cog
+                  v-icon(color='blue-grey') mdi-cog
               span {{$t('common:header.admin')}}
             v-btn(v-else, text, tile, height='64', href='/', :aria-label='$t(`common:actions.exit`)')
-              v-icon(left, color='grey') mdi-exit-to-app
+              v-icon(left, color='blue-grey') mdi-exit-to-app
               span {{$t('common:actions.exit')}}
             v-divider(vertical)
 
@@ -203,7 +203,7 @@
                     height='64'
                     :aria-label='$t(`common:header.account`)'
                     )
-                    v-icon(v-if='picture.kind === `initials`', color='grey') mdi-account-circle
+                    v-icon(v-if='picture.kind === `initials`', color='blue-grey') mdi-account-circle
                     v-avatar(v-else-if='picture.kind === `image`', :size='34')
                       v-img(:src='picture.url')
                 span {{$t('common:header.account')}}
@@ -232,8 +232,8 @@
 
           v-tooltip(v-else, left)
             template(v-slot:activator='{ on }')
-              v-btn(icon, v-on='on', color='grey darken-3', href='/login', :aria-label='$t(`common:header.login`)')
-                v-icon(color='grey') mdi-account-circle
+              v-btn(icon, v-on='on', color='blue-grey lighten-5', href='/login', :aria-label='$t(`common:header.login`)')
+                v-icon(color='blue-grey') mdi-account-circle
             span {{$t('common:header.login')}}
 
     page-selector(mode='create', v-model='newPageModal', :open-handler='pageNewCreate', :locale='locale')
@@ -283,6 +283,7 @@ export default {
       deletePageModal: false,
       locales: siteLangs,
       isDevMode: false,
+      topLogoUrl: '/_assets/svg/favicon.svg',
       duplicateOpts: {
         locale: 'en',
         path: 'new-page',
@@ -298,7 +299,6 @@ export default {
     searchRestrictPath: sync('site/searchRestrictPath'),
     isLoading: get('isLoading'),
     title: get('site/title'),
-    logoUrl: get('site/logoUrl'),
     path: get('page/path'),
     locale: get('page/locale'),
     mode: get('page/mode'),
