@@ -2834,6 +2834,12 @@
     overflow-y: auto !important;
   }
 
+  .nav-sidebar-modern .reader-home-list.v-list {
+    flex: 0 0 auto !important;
+    overflow: visible !important;
+    padding-bottom: 4px !important;
+  }
+
   .nav-sidebar-modern .reader-tree-row.v-list-item {
     min-height: 34px !important;
     position: relative;
@@ -2946,5 +2952,166 @@
     font-size: 10px;
     line-height: 1;
     transform: translateY(-5px);
+  }
+}
+
+/* Keep home and document pages on the same reader width. */
+.wiki-reader-app {
+  --reader-content-max: 1380px;
+
+  .page-breadcrumb-bar.v-toolbar .v-toolbar__content,
+  .page-header-section .page-col-content.is-page-header,
+  .page-workspace {
+    width: 100%;
+    max-width: var(--reader-content-max) !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+
+  .page-workspace {
+    padding-right: 54px !important;
+    padding-left: 54px !important;
+  }
+
+  .page-layout.row {
+    width: 100%;
+  }
+}
+
+.wiki-reader-app.reader-home-page {
+  .home-page,
+  .reader-home-prototype {
+    width: 100%;
+    max-width: var(--reader-content-max) !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+}
+
+@media (max-width: 959px) {
+  .wiki-reader-app {
+    .page-workspace {
+      padding-right: 18px !important;
+      padding-left: 18px !important;
+    }
+  }
+}
+
+/* Final width lock: prevent route changes from resizing the reader area. */
+.wiki-reader-app {
+  --reader-shell-max: 1380px;
+  --reader-main-max: 920px;
+
+  .page-breadcrumb-bar.v-toolbar .v-toolbar__content,
+  .page-header-section .page-col-content.is-page-header,
+  .page-workspace,
+  &.reader-home-page .home-page,
+  &.reader-home-page .reader-home-prototype {
+    width: 100% !important;
+    max-width: var(--reader-shell-max) !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+
+  .page-layout.layout,
+  .page-layout.row {
+    display: grid !important;
+    grid-template-columns: minmax(0, var(--reader-main-max)) 230px !important;
+    justify-content: center !important;
+    align-items: start !important;
+    gap: 58px !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .page-layout > .page-col-content {
+    width: 100% !important;
+    max-width: var(--reader-main-max) !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .document-surface.contents {
+    width: 100% !important;
+    max-width: var(--reader-main-max) !important;
+  }
+
+  &.reader-home-page .page-layout.layout,
+  &.reader-home-page .page-layout.row {
+    display: block !important;
+    max-width: var(--reader-shell-max) !important;
+  }
+
+  &.reader-home-page .page-layout > .page-col-content {
+    max-width: none !important;
+  }
+}
+
+@media (max-width: 1263px) {
+  .wiki-reader-app {
+    .page-layout.layout,
+    .page-layout.row {
+      grid-template-columns: minmax(0, var(--reader-main-max)) !important;
+      gap: 0 !important;
+    }
+
+    .page-col-sd {
+      display: none !important;
+    }
+  }
+}
+
+/* Final sidebar lock: keep the navigation identical on home and document pages. */
+.wiki-reader-app {
+  --reader-sidebar: 292px;
+
+  .reader-navigation-drawer.v-navigation-drawer,
+  .reader-navigation-drawer.v-navigation-drawer.primary,
+  .reader-navigation-drawer .v-navigation-drawer__content,
+  .reader-navigation-drawer .__vuescroll,
+  .reader-navigation-drawer .__panel,
+  .reader-navigation-drawer .__view,
+  .nav-sidebar-modern {
+    width: var(--reader-sidebar) !important;
+    min-width: var(--reader-sidebar) !important;
+    max-width: var(--reader-sidebar) !important;
+    box-sizing: border-box !important;
+  }
+
+  .nav-sidebar-modern {
+    align-items: stretch !important;
+  }
+
+  .reader-sidebar-brand,
+  .reader-sidebar-tools,
+  .reader-tree-head,
+  .reader-sidebar-footer,
+  .nav-sidebar-modern .reader-tree.v-list,
+  .nav-sidebar-modern .reader-home-list.v-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .nav-sidebar-modern .reader-tree.v-list,
+  .nav-sidebar-modern .reader-home-list.v-list {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+  }
+
+  .nav-sidebar-modern .reader-tree-row.v-list-item {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+.wiki-reader-app.reader-home-page {
+  .nav-sidebar-modern .reader-tree.v-list,
+  .nav-sidebar-modern .reader-home-list.v-list,
+  .nav-sidebar-modern .reader-tree-row.v-list-item {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }

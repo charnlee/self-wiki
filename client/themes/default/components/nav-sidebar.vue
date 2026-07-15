@@ -21,6 +21,14 @@
         reader-icon(name='plus', size='19')
         span 新建页面
         reader-icon(name='chevron-down', size='15')
+    v-list.reader-tree.reader-home-list(v-if='currentMode === `browse`', dense, :class='color', :dark='dark')
+      v-list-item.reader-tree-row.reader-home-row(
+        :href='`/` + locale + `/home`'
+        :input-value='path === `home`'
+        )
+        v-list-item-avatar(size='24')
+          reader-icon(name='home', size='18')
+        v-list-item-title 首页
     .reader-tree-head
       span 文档
       button(type='button', @click='pageNew', v-if='hasNewPagePermission && path', aria-label='新建页面') +
@@ -42,13 +50,6 @@
       .reader-empty-state(v-if='visibleCustomItems.length < 1') 没有匹配的页面
     //-> Browse
     v-list.reader-tree(v-else-if='currentMode === `browse`', dense, :class='color', :dark='dark')
-      v-list-item.reader-tree-row.reader-home-row(
-        :href='`/` + locale + `/home`'
-        :input-value='path === `home`'
-        )
-        v-list-item-avatar(size='24')
-          reader-icon(name='home', size='18')
-        v-list-item-title 首页
       template(v-for='item of visibleBrowseItems')
         v-list-item.reader-tree-row(
           v-if='item.isFolder'
