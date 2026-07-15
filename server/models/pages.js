@@ -676,6 +676,10 @@ module.exports = class Page extends Model {
       throw new WIKI.Error.PageNotFound()
     }
 
+    if (page.path === 'home') {
+      throw new WIKI.Error.PageMoveForbidden()
+    }
+
     // -> Validate path
     if (opts.destinationPath.includes('.') || opts.destinationPath.includes(' ') || opts.destinationPath.includes('\\') || opts.destinationPath.includes('//')) {
       throw new WIKI.Error.PageIllegalPath()
@@ -792,6 +796,10 @@ module.exports = class Page extends Model {
     const page = await WIKI.models.pages.getPageFromDb(_.has(opts, 'id') ? opts.id : opts)
     if (!page) {
       throw new WIKI.Error.PageNotFound()
+    }
+
+    if (page.path === 'home') {
+      throw new WIKI.Error.PageDeleteForbidden()
     }
 
     // -> Check for page access

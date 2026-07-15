@@ -1,11 +1,11 @@
 <template lang='pug'>
-  v-app-bar.nav-header(color='white', light, app, :clipped-left='!$vuetify.rtl', :clipped-right='$vuetify.rtl', fixed, flat, :extended='searchIsShown && $vuetify.breakpoint.smAndDown')
-    v-toolbar.nav-header-mobile-search(color='white', flat, slot='extension', v-if='searchIsShown && $vuetify.breakpoint.smAndDown')
+  v-app-bar.nav-header(:color='$vuetify.theme.dark ? `grey darken-4` : `white`', :light='!$vuetify.theme.dark', :dark='$vuetify.theme.dark', app, :clipped-left='!$vuetify.rtl', :clipped-right='$vuetify.rtl', fixed, flat, :extended='searchIsShown && $vuetify.breakpoint.smAndDown')
+    v-toolbar.nav-header-mobile-search(:color='$vuetify.theme.dark ? `grey darken-4` : `white`', :dark='$vuetify.theme.dark', flat, slot='extension', v-if='searchIsShown && $vuetify.breakpoint.smAndDown')
       v-text-field(
         ref='searchFieldMobile'
         v-model='search'
         clearable
-        background-color='white'
+        :background-color='$vuetify.theme.dark ? `grey darken-3` : `white`'
         color='blue'
         :label='$t(`common:header.search`)'
         single-line
@@ -19,9 +19,9 @@
       )
     v-layout(row)
       v-flex(xs5, md4)
-        v-toolbar.nav-header-inner(color='white', light, flat, :class='$vuetify.rtl ? `pr-3` : `pl-3`')
+        v-toolbar.nav-header-inner(:color='$vuetify.theme.dark ? `grey darken-4` : `white`', :light='!$vuetify.theme.dark', :dark='$vuetify.theme.dark', flat, :class='$vuetify.rtl ? `pr-3` : `pl-3`')
           v-avatar.nav-header-logo(tile, size='38', @click='goHome')
-            img.org-logo(:src='topLogoUrl', alt='Self Wiki')
+            img.org-logo(:src='topLogoUrl', alt='charnlee.wiki')
           //- v-menu(open-on-hover, offset-y, bottom, left, min-width='250', transition='slide-y-transition')
           //-   template(v-slot:activator='{ on }')
           //-     v-app-bar-nav-icon.btn-animate-app(v-on='on', :class='$vuetify.rtl ? `mx-0` : ``')
@@ -44,9 +44,9 @@
           //-         v-list-item-title.body-2.grey--text.text--ligten-2 {{$t('common:header.imagesFiles')}}
           //-         v-list-item-subtitle.overline.grey--text.text--lighten-2 Coming soon
           v-toolbar-title(:class='{ "mx-3": $vuetify.breakpoint.mdAndUp, "mx-1": $vuetify.breakpoint.smAndDown }')
-            span.subheading {{title}}
+            span.subheading {{displayTitle}}
       v-flex(md4, v-if='$vuetify.breakpoint.mdAndUp')
-        v-toolbar.nav-header-inner(color='white', light, flat)
+        v-toolbar.nav-header-inner(:color='$vuetify.theme.dark ? `grey darken-4` : `white`', :light='!$vuetify.theme.dark', :dark='$vuetify.theme.dark', flat)
           slot(name='mid')
             transition(name='navHeaderSearch', v-if='searchIsShown')
               v-text-field(
@@ -76,7 +76,7 @@
                   v-icon(color='blue-grey') mdi-tag-multiple
               span {{$t('common:header.browseTags')}}
       v-flex(xs7, md4)
-        v-toolbar.nav-header-inner.pr-4(color='white', light, flat)
+        v-toolbar.nav-header-inner.pr-4(:color='$vuetify.theme.dark ? `grey darken-4` : `white`', :light='!$vuetify.theme.dark', :dark='$vuetify.theme.dark', flat)
           v-spacer
           .navHeaderLoading.mr-3
             v-progress-circular(indeterminate, color='blue', :size='22', :width='2' v-show='isLoading')
@@ -156,11 +156,11 @@
                 v-list-item.pl-4(@click='pageDuplicate', v-if='hasWritePagesPermission')
                   v-list-item-avatar(size='24', tile): v-icon(color='indigo') mdi-content-duplicate
                   v-list-item-title.body-2 {{$t('common:header.duplicate')}}
-                v-list-item.pl-4(@click='pageMove', v-if='hasManagePagesPermission')
+                v-list-item.pl-4(@click='pageMove', v-if='canMoveCurrentPage')
                   v-list-item-avatar(size='24', tile): v-icon(color='indigo') mdi-content-save-move-outline
                   v-list-item-content
                     v-list-item-title.body-2 {{$t('common:header.move')}}
-                v-list-item.pl-4(@click='pageDelete', v-if='hasDeletePagesPermission')
+                v-list-item.pl-4(@click='pageDelete', v-if='canDeleteCurrentPage')
                   v-list-item-avatar(size='24', tile): v-icon(color='red darken-2') mdi-trash-can-outline
                   v-list-item-title.body-2 {{$t('common:header.delete')}}
             v-divider(vertical)
@@ -242,11 +242,6 @@
     page-delete(v-model='deletePageModal', v-if='path && path.length')
     page-convert(v-model='convertPageModal', v-if='path && path.length')
 
-    .nav-header-dev(v-if='isDevMode')
-      v-icon mdi-alert
-      div
-        .overline DEVELOPMENT VERSION
-        .overline This code base is NOT for production use!
 </template>
 
 <script>
@@ -283,7 +278,7 @@ export default {
       deletePageModal: false,
       locales: siteLangs,
       isDevMode: false,
-      topLogoUrl: '/_assets/svg/favicon.svg',
+      topLogoUrl: '/_assets/favicons/favicon.svg',
       duplicateOpts: {
         locale: 'en',
         path: 'new-page',
@@ -299,6 +294,9 @@ export default {
     searchRestrictPath: sync('site/searchRestrictPath'),
     isLoading: get('isLoading'),
     title: get('site/title'),
+    displayTitle () {
+      return this.title === 'Wiki.js' ? 'charnlee.wiki' : this.title
+    },
     path: get('page/path'),
     locale: get('page/locale'),
     mode: get('page/mode'),
@@ -335,6 +333,12 @@ export default {
     hasWritePagesPermission: get('page/effectivePermissions@pages.write'),
     hasManagePagesPermission: get('page/effectivePermissions@pages.manage'),
     hasDeletePagesPermission: get('page/effectivePermissions@pages.delete'),
+    canMoveCurrentPage () {
+      return this.hasManagePagesPermission && this.path !== 'home'
+    },
+    canDeleteCurrentPage () {
+      return this.hasDeletePagesPermission && this.path !== 'home'
+    },
     hasReadSourcePermission: get('page/effectivePermissions@source.read'),
     hasReadHistoryPermission: get('page/effectivePermissions@history.read'),
     hasAnyPagePermissions () {

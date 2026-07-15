@@ -1,8 +1,9 @@
 <template lang="pug">
-  v-app(v-scroll='upBtnScroll', :dark='$vuetify.theme.dark', :class='$vuetify.rtl ? `is-rtl` : `is-ltr`')
+  v-app(v-scroll='upBtnScroll', :dark='$vuetify.theme.dark', :class='[$vuetify.rtl ? `is-rtl` : `is-ltr`, `wiki-reader-app`, path === `home` ? `reader-home-page` : ``]')
     nav-header(v-if='!printView')
     v-navigation-drawer(
       v-if='navMode !== `NONE` && !printView'
+      class='reader-navigation-drawer'
       :class='$vuetify.theme.dark ? `grey darken-4-d4` : `primary`'
       dark
       app
@@ -30,9 +31,9 @@
         )
         v-icon mdi-menu
 
-    v-main(ref='content')
+    v-main.self-wiki-main(ref='content')
       template(v-if='path !== `home`')
-        v-toolbar(:color='$vuetify.theme.dark ? `grey darken-4-d3` : `grey lighten-3`', flat, dense, v-if='$vuetify.breakpoint.smAndUp')
+        v-toolbar.page-breadcrumb-bar(:color='$vuetify.theme.dark ? `grey darken-4-d3` : `grey lighten-3`', flat, dense, v-if='$vuetify.breakpoint.smAndUp')
           //- v-btn.pl-0(v-if='$vuetify.breakpoint.xsOnly', flat, @click='toggleNavigation')
           //-   v-icon(color='grey darken-2', left) menu
           //-   span Navigation
@@ -48,16 +49,9 @@
             .caption.red--text {{$t('common:page.unpublished')}}
             status-indicator.ml-3(negative, pulse)
         v-divider
-      v-container.grey.pa-0(fluid, :class='$vuetify.theme.dark ? `darken-4-l3` : `lighten-4`')
-        v-row.page-header-section(no-gutters, align-content='center', style='height: 90px;')
-          v-col.page-col-content.is-page-header(
-            :offset-xl='tocPosition === `left` ? 2 : 0'
-            :offset-lg='tocPosition === `left` ? 3 : 0'
-            :xl='tocPosition === `right` ? 10 : false'
-            :lg='tocPosition === `right` ? 9 : false'
-            style='margin-top: auto; margin-bottom: auto;'
-            :class='$vuetify.rtl ? `pr-4` : `pl-4`'
-            )
+      v-container.page-shell.grey.pa-0(fluid, :class='$vuetify.theme.dark ? `darken-4-l3` : `lighten-4`')
+        v-row.page-header-section(no-gutters, align-content='center')
+          v-col.page-col-content.is-page-header(cols='12')
             .page-header-headings
               .headline.grey--text(:class='$vuetify.theme.dark ? `text--lighten-2` : `text--darken-3`') {{title}}
               .caption.grey--text.text--darken-1 {{description}}
@@ -83,14 +77,10 @@
                 v-icon.mr-2(small) {{ editShortcutsObj.editMenuExternalIcon }}
                 span.text-none {{$t(`common:page.editExternal`, { name: editShortcutsObj.editMenuExternalName })}}
       v-divider
-      v-container.pl-5.pt-4(fluid, grid-list-xl)
-        v-layout(row)
+      v-container.page-workspace.pl-5.pt-4(fluid, grid-list-xl)
+        v-layout.page-layout(row)
           v-flex.page-col-sd(
             v-if='tocPosition !== `off` && $vuetify.breakpoint.lgAndUp'
-            :order-xs1='tocPosition !== `right`'
-            :order-xs2='tocPosition === `right`'
-            lg3
-            xl2
             )
             v-card.page-toc-card.mb-5(v-if='tocDecoded.length')
               .overline.pa-5.pb-0(:class='$vuetify.theme.dark ? `blue--text text--lighten-2` : `primary--text`') {{$t('common:page.toc')}}
@@ -220,14 +210,8 @@
                   span {{$t('common:page.printFormat')}}
                 v-spacer
 
-          v-flex.page-col-content(
-            xs12
-            :lg9='tocPosition !== `off`'
-            :xl10='tocPosition !== `off`'
-            :order-xs1='tocPosition === `right`'
-            :order-xs2='tocPosition !== `right`'
-            )
-            v-tooltip(:right='$vuetify.rtl', :left='!$vuetify.rtl', v-if='hasAnyPagePermissions && editShortcutsObj.editFab')
+          v-flex.page-col-content
+            v-tooltip(:right='$vuetify.rtl', :left='!$vuetify.rtl', v-if='path !== `home` && hasAnyPagePermissions && editShortcutsObj.editFab')
               template(v-slot:activator='{ on: onEditActivator }')
                 v-speed-dial(
                   v-model='pageEditFab'
@@ -299,7 +283,7 @@
                         )
                         v-icon(size='20') mdi-content-duplicate
                     span {{$t('common:header.duplicate')}}
-                  v-tooltip(:right='$vuetify.rtl', :left='!$vuetify.rtl', v-if='hasManagePagesPermission')
+                  v-tooltip(:right='$vuetify.rtl', :left='!$vuetify.rtl', v-if='canMoveCurrentPage')
                     template(v-slot:activator='{ on }')
                       v-btn(
                         fab
@@ -311,7 +295,7 @@
                         )
                         v-icon(size='20') mdi-content-save-move-outline
                     span {{$t('common:header.move')}}
-                  v-tooltip(:right='$vuetify.rtl', :left='!$vuetify.rtl', v-if='hasDeletePagesPermission')
+                  v-tooltip(:right='$vuetify.rtl', :left='!$vuetify.rtl', v-if='canDeleteCurrentPage')
                     template(v-slot:activator='{ on }')
                       v-btn(
                         fab
@@ -326,9 +310,150 @@
               span {{$t('common:page.editPage')}}
             v-alert.mb-5(v-if='!isPublished', color='red', outlined, icon='mdi-minus-circle', dense)
               .caption {{$t('common:page.unpublishedWarning')}}
-            .contents(ref='container')
+            .reader-home-prototype(v-if='path === `home`')
+              .home-page(ref='container')
+                .page-actions
+                  button(type='button', @click='goTags')
+                    reader-icon(name='tag', size='16')
+                    span 标签
+                  button(type='button')
+                    reader-icon(name='message-square', size='16')
+                    span 讨论
+                    sup 3
+                  button(type='button', @click='pageHistory', v-if='hasReadHistoryPermission')
+                    reader-icon(name='history', size='16')
+                    span 历史
+                  button(type='button')
+                    reader-icon(name='share-2', size='16')
+                    span 分享
+                  button(type='button', @click='pageEdit', v-if='hasWritePagesPermission')
+                    reader-icon(name='edit-3', size='16')
+                    span 编辑
+                section.hero
+                  div
+                    .eyebrow 个人知识库 · 持续生长
+                    h1
+                      | 把零散经验，
+                      br
+                      | 沉淀为持续生长的知识系统
+                    p.hero-copy 在这里记录学习、项目、技术研究与思考，让每一次探索都有回响，让知识成为长期复利。
+                    .hero-buttons
+                      button.primary(type='button', @click='scrollHomeSection(`collections`)')
+                        reader-icon(name='compass', size='17')
+                        span 开始探索
+                      button.secondary(type='button', @click='scrollHomeSection(`updates`)')
+                        reader-icon(name='clock', size='17')
+                        span 查看最近更新
+                    .curated Curated by charnlee
+                  .knowledge-map(aria-label='知识关系图示')
+                    span.map-line.line-1
+                    span.map-line.line-2
+                    span.map-line.line-3
+                    span.map-node.node-a
+                    span.map-node.node-b
+                    span.map-node.node-c
+                    .scribble.a 方法论 →
+                    .scribble.b 理解基础
+                    .note-card.note-1
+                      strong LLM 原理浅析
+                      small # AI 与机器学习
+                      .note-lines 从 Transformer 到大语言模型的关键机制与能力边界。
+                    .note-card.note-2
+                      strong RAG 实践笔记
+                      small # AI 与机器学习
+                      .note-lines 检索增强生成的工程实践与效果优化记录。
+                    .note-card.note-3
+                      strong 项目复盘要点
+                      .note-lines
+                        | ✓ 目标回顾
+                        br
+                        | ✓ 关键决策
+                        br
+                        | ✓ 经验沉淀
+                    .sticky-note
+                      | 知识不是堆积，
+                      br
+                      | 而是连接与生长。
+                      br
+                      small — charnlee —
+                section#collections
+                  h2.section-title
+                    reader-icon(name='folder-open', size='20')
+                    span 知识路径
+                  .collections
+                    article.collection
+                      .folder.sage
+                        reader-icon(name='folder', size='23')
+                      div
+                        strong AI 与 Agent
+                        small
+                          | 18 篇文档 · 3 个子目录
+                          br
+                          | 最后更新：2 天前
+                      span.arrow ›
+                    article.collection
+                      .folder.sand
+                        reader-icon(name='file-text', size='23')
+                      div
+                        strong 技术笔记
+                        small
+                          | 42 篇文档 · 6 个子目录
+                          br
+                          | 最后更新：1 天前
+                      span.arrow ›
+                    article.collection
+                      .folder.blue
+                        reader-icon(name='archive', size='23')
+                      div
+                        strong 项目复盘
+                        small
+                          | 15 篇文档 · 4 个子目录
+                          br
+                          | 最后更新：5 天前
+                      span.arrow ›
+                    article.collection
+                      .folder.gold
+                        reader-icon(name='sparkles', size='23')
+                      div
+                        strong 灵感收藏
+                        small
+                          | 27 篇文档 · 2 个子目录
+                          br
+                          | 最后更新：3 天前
+                      span.arrow ›
+                section.updates#updates
+                  .update-head
+                    h2.section-title
+                      reader-icon(name='clock', size='20')
+                      span 最近更新
+                    a(href='#') 查看全部 →
+                  .update-row
+                    reader-icon(name='file-text', size='17')
+                    strong Agent 长期记忆的设计与实践
+                    .tags
+                      span.tag.green Agents
+                      span.tag AI
+                    time 2026/07/15 14:32
+                  .update-row
+                    reader-icon(name='file-text', size='17')
+                    strong RAG 实践笔记：检索策略与效果优化
+                    .tags
+                      span.tag.green RAG
+                      span.tag 机器学习
+                    time 2026/07/15 10:18
+                  .update-row
+                    reader-icon(name='file-text', size='17')
+                    strong 空间智能项目复盘：从 0 到 1 的探索
+                    .tags
+                      span.tag.green 项目复盘
+                      span.tag 复盘
+                    time 2026/07/14 22:41
+                button.edit-fab(type='button', @click='pageEdit', v-if='hasWritePagesPermission')
+                  reader-icon(name='edit-3', size='18')
+                  span 编辑此页
+            .document-surface.contents(v-else, ref='container')
               slot(name='contents')
-            .comments-container#discussion(v-if='commentsEnabled && commentsPerms.read && !printView')
+            .comments-container#discussion(v-if='path !== `home` && commentsEnabled && commentsPerms.read && !printView')
               .comments-header
                 v-icon.mr-2(dark) mdi-comment-text-outline
                 span {{$t('common:comments.title')}}
@@ -360,6 +485,7 @@
 import { StatusIndicator } from 'vue-status-indicator'
 import Tabset from './tabset.vue'
 import NavSidebar from './nav-sidebar.vue'
+import ReaderIcon from './reader-icon.vue'
 import Prism from 'prismjs'
 import mermaid from 'mermaid'
 import { get, sync } from 'vuex-pathify'
@@ -409,6 +535,7 @@ Prism.plugins.toolbar.registerButton('copy-to-clipboard', (env) => {
 export default {
   components: {
     NavSidebar,
+    ReaderIcon,
     StatusIndicator
   },
   props: {
@@ -568,6 +695,12 @@ export default {
     hasWritePagesPermission: get('page/effectivePermissions@pages.write'),
     hasManagePagesPermission: get('page/effectivePermissions@pages.manage'),
     hasDeletePagesPermission: get('page/effectivePermissions@pages.delete'),
+    canMoveCurrentPage () {
+      return this.hasManagePagesPermission && this.path !== 'home'
+    },
+    canDeleteCurrentPage () {
+      return this.hasDeletePagesPermission && this.path !== 'home'
+    },
     hasReadSourcePermission: get('page/effectivePermissions@source.read'),
     hasReadHistoryPermission: get('page/effectivePermissions@history.read'),
     hasAnyPagePermissions () {
@@ -657,6 +790,15 @@ export default {
         window.location.assign(`/${this.locale}/home`)
       } else {
         window.location.assign('/')
+      }
+    },
+    goTags () {
+      window.location.assign('/t')
+    },
+    scrollHomeSection (id) {
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
       }
     },
     toggleNavigation () {

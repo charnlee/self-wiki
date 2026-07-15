@@ -1,7 +1,7 @@
 <template lang='pug'>
   v-app(:dark='$vuetify.theme.dark').tags
     nav-header
-    v-navigation-drawer.pb-0.elevation-1(app, fixed, clipped, :right='$vuetify.rtl', permanent, width='300')
+    v-navigation-drawer.tags-drawer.pb-0(app, fixed, clipped, :right='$vuetify.rtl', permanent, width='300')
       vue-scroll(:ops='scrollStyle')
         v-list(dense, nav)
           v-list-item(href='/')
@@ -15,22 +15,23 @@
                 v-icon(v-if='isSelected(tag.tag)', color='primary') mdi-checkbox-intermediate
                 v-icon(v-else) mdi-checkbox-blank-outline
               v-list-item-title {{tag.title}}
-    v-content.grey(:class='$vuetify.theme.dark ? `darken-4-d5` : `lighten-3`')
-      v-toolbar(color='primary', dark, flat, height='58')
+    v-content.tags-main
+      v-toolbar.tags-selection-bar(flat, height='58')
         template(v-if='selection.length > 0')
           .overline.mr-3.animated.fadeInLeft {{$t('tags:currentSelection')}}
           v-chip.mr-3.primary--text(
             v-for='tag of tagsSelected'
             :key='`tagSelected-` + tag.tag'
-            color='white'
+            color='primary'
+            outlined
             close
             @click:close='toggleTag(tag.tag)'
             ) {{tag.title}}
           v-spacer
-          v-btn.animated.fadeIn(
+          v-btn.tags-clear-btn.animated.fadeIn(
             small
             outlined
-            color='blue lighten-4'
+            color='primary'
             rounded
             @click='selection = []'
             )
@@ -39,7 +40,7 @@
         template(v-else)
           v-icon.mr-3.animated.fadeInRight mdi-arrow-left
           .overline.animated.fadeInRight {{$t('tags:selectOneMoreTags')}}
-      v-toolbar(:color='$vuetify.theme.dark ? `grey darken-4-l5` : `grey lighten-4`', flat, height='58')
+      v-toolbar.tags-filter-bar(flat, height='58')
         v-text-field.tags-search(
           v-model='innerSearch'
           :label='$t(`tags:searchWithinResultsPlaceholder`)'
@@ -88,10 +89,10 @@
           v-btn(text, height='40'): v-icon(size='20') mdi-chevron-double-up
           v-btn(text, height='40'): v-icon(size='20') mdi-chevron-double-down
       v-divider
-      .text-center.pt-10(v-if='selection.length < 1')
+      .tags-empty-state.text-center.pt-10(v-if='selection.length < 1')
         img(src='/_assets/svg/icon-price-tag.svg')
         .subtitle-2.grey--text {{$t('tags:selectOneMoreTagsHint')}}
-      .px-5.py-2(v-else)
+      .tags-results.px-5.py-2(v-else)
         v-data-iterator(
           :items='pages'
           :items-per-page='4'
@@ -103,7 +104,7 @@
           ref='dude'
           )
           template(v-slot:loading)
-            .text-center.pt-10
+            .tags-empty-state.text-center.pt-10
               v-progress-circular(
                 indeterminate
                 color='primary'
@@ -112,11 +113,11 @@
                 )
               .subtitle-2.grey--text.mt-5 {{$t('tags:retrievingResultsLoading')}}
           template(v-slot:no-data)
-            .text-center.pt-10
+            .tags-empty-state.text-center.pt-10
               img(src='/_assets/svg/icon-info.svg')
               .subtitle-2.grey--text {{$t('tags:noResults')}}
           template(v-slot:no-results)
-            .text-center.pt-10
+            .tags-empty-state.text-center.pt-10
               img(src='/_assets/svg/icon-info.svg')
               .subtitle-2.grey--text {{$t('tags:noResultsWithFilter')}}
           template(v-slot:default='props')
@@ -127,7 +128,7 @@
                 cols='12'
                 lg='6'
                 )
-                v-card.radius-7(
+                v-card.tags-result-card(
                   @click='goTo(item)'
                   style='height:100%;'
                   :class='$vuetify.theme.dark ? `grey darken-4` : ``'
@@ -329,6 +330,252 @@ export default {
 </script>
 
 <style lang='scss'>
+.tags {
+  --tags-bg: #f5f4ef;
+  --tags-surface: rgba(255, 255, 255, .86);
+  --tags-surface-solid: #fffefa;
+  --tags-line: #e1ddd4;
+  --tags-text: #18202a;
+  --tags-muted: #6d7580;
+  --tags-ink: #111827;
+  --tags-blue: #315efb;
+  --tags-sage: #718b7b;
+  --tags-shadow: 0 16px 42px rgba(31, 36, 43, .08);
+  background:
+    linear-gradient(90deg, rgba(24, 32, 42, .028) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(24, 32, 42, .024) 1px, transparent 1px),
+    var(--tags-bg) !important;
+  background-size: 44px 44px, 44px 44px, auto;
+  color: var(--tags-text);
+
+  .tags-drawer.v-navigation-drawer {
+    border-right: 1px solid rgba(225, 221, 212, .9) !important;
+    background: rgba(255, 254, 250, .9) !important;
+    box-shadow: none !important;
+
+    .v-navigation-drawer__content {
+      padding: 18px 14px;
+      background: transparent !important;
+    }
+
+    .v-list {
+      padding: 0;
+      background: transparent !important;
+    }
+
+    .v-subheader {
+      height: auto;
+      padding: 16px 12px 7px !important;
+      color: var(--tags-muted) !important;
+      font-size: 11px;
+      font-weight: 820;
+      letter-spacing: 0;
+    }
+
+    .v-list-item {
+      min-height: 38px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      color: var(--tags-muted) !important;
+      font-weight: 680;
+    }
+
+    .v-list-item:hover {
+      background: rgba(49, 94, 251, .07) !important;
+      color: var(--tags-blue) !important;
+    }
+
+    .v-icon {
+      color: currentColor !important;
+    }
+  }
+
+  .tags-main {
+    background: transparent !important;
+  }
+
+  .tags-selection-bar.v-toolbar,
+  .tags-filter-bar.v-toolbar {
+    margin: 18px 32px 0;
+    border: 1px solid var(--tags-line);
+    border-radius: 10px;
+    background: var(--tags-surface) !important;
+    box-shadow: var(--tags-shadow);
+    color: var(--tags-text) !important;
+    backdrop-filter: blur(12px);
+
+    .v-toolbar__content {
+      padding-right: 18px;
+      padding-left: 18px;
+    }
+
+    .overline {
+      color: var(--tags-muted);
+      font-weight: 820;
+      letter-spacing: 0 !important;
+    }
+  }
+
+  .tags-filter-bar.v-toolbar {
+    margin-top: 12px;
+  }
+
+  .tags-selection-bar .v-chip {
+    border-color: rgba(49, 94, 251, .22) !important;
+    background: #edf1ff !important;
+    color: var(--tags-blue) !important;
+    font-weight: 760;
+  }
+
+  .tags-clear-btn.v-btn {
+    border-color: rgba(49, 94, 251, .32) !important;
+    color: var(--tags-blue) !important;
+    font-weight: 760;
+  }
+
+  .tags-search .v-input__slot,
+  .v-select .v-input__slot {
+    border: 1px solid var(--tags-line);
+    border-radius: 8px !important;
+    background: rgba(255, 254, 250, .92) !important;
+    box-shadow: none !important;
+  }
+
+  .tags-empty-state {
+    max-width: 520px;
+    margin: 72px auto 0;
+    padding: 44px 32px;
+    border: 1px solid var(--tags-line);
+    border-radius: 10px;
+    background: var(--tags-surface);
+    box-shadow: var(--tags-shadow);
+
+    img {
+      width: 136px;
+      max-width: 42vw;
+      opacity: .82;
+    }
+
+    .subtitle-2 {
+      margin-top: 16px;
+      color: var(--tags-muted) !important;
+      font-size: 14px;
+    }
+  }
+
+  .tags-results {
+    padding: 26px 32px 18px !important;
+  }
+
+  .tags-result-card.v-card {
+    overflow: hidden;
+    border: 1px solid var(--tags-line) !important;
+    border-radius: 10px !important;
+    background: var(--tags-surface) !important;
+    box-shadow: var(--tags-shadow) !important;
+    color: var(--tags-text);
+    transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+
+    &:hover {
+      border-color: rgba(49, 94, 251, .32) !important;
+      box-shadow: 0 20px 48px rgba(31, 36, 43, .12) !important;
+      transform: translateY(-2px);
+    }
+
+    .primary--text {
+      color: var(--tags-blue) !important;
+    }
+
+    .grey--text,
+    .caption,
+    .body-2 {
+      color: var(--tags-muted) !important;
+    }
+
+    .v-chip {
+      border: 1px solid rgba(113, 139, 123, .22);
+      background: #edf4ef !important;
+      color: var(--tags-sage) !important;
+    }
+  }
+
+  .v-pagination {
+    .v-pagination__item,
+    .v-pagination__navigation {
+      border-radius: 8px;
+      box-shadow: none;
+    }
+  }
+}
+
+.theme--dark.tags {
+  --tags-bg: #0d1117;
+  --tags-surface: rgba(22, 27, 34, .88);
+  --tags-surface-solid: #161b22;
+  --tags-line: #303843;
+  --tags-text: #d8e0e7;
+  --tags-muted: #93a1af;
+  --tags-ink: #ffffff;
+  --tags-blue: #7aa2ff;
+  --tags-sage: #9bb8a3;
+  --tags-shadow: 0 18px 48px rgba(0, 0, 0, .28);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, .032) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, .026) 1px, transparent 1px),
+    radial-gradient(circle at 25% 0%, rgba(76, 104, 255, .12), transparent 34%),
+    #0d1117 !important;
+  background-size: 44px 44px, 44px 44px, auto, auto;
+
+  .tags-drawer.v-navigation-drawer {
+    border-right-color: rgba(48, 56, 67, .9) !important;
+    background: rgba(16, 21, 29, .92) !important;
+  }
+
+  .tags-selection-bar.v-toolbar,
+  .tags-filter-bar.v-toolbar,
+  .tags-empty-state,
+  .tags-result-card.v-card,
+  .tags-search .v-input__slot,
+  .v-select .v-input__slot,
+  .v-menu__content .v-card,
+  .v-menu__content .v-list {
+    border-color: var(--tags-line) !important;
+    background: var(--tags-surface) !important;
+  }
+
+  .tags-selection-bar .v-chip {
+    border-color: rgba(122, 162, 255, .24) !important;
+    background: rgba(122, 162, 255, .12) !important;
+    color: var(--tags-blue) !important;
+  }
+
+  .tags-result-card.v-card .v-chip {
+    border-color: rgba(155, 184, 163, .22);
+    background: rgba(155, 184, 163, .12) !important;
+    color: var(--tags-sage) !important;
+  }
+
+  .v-label,
+  input,
+  .v-select__selection,
+  .v-list-item__title,
+  .body-1,
+  strong {
+    color: var(--tags-text) !important;
+  }
+
+  .overline,
+  .grey--text,
+  .caption,
+  .body-2 {
+    color: var(--tags-muted) !important;
+  }
+
+  .v-divider {
+    border-color: var(--tags-line) !important;
+  }
+}
+
 .tags-search {
   .v-input__control {
     min-height: initial !important;
