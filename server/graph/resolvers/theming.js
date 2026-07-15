@@ -16,7 +16,7 @@ module.exports = {
       return [{ // TODO
         key: 'default',
         title: 'Default',
-        author: 'requarks.io'
+        author: 'charnlee.wiki'
       }]
     },
     async config(obj, args, context, info) {

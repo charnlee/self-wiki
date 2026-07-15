@@ -1,7 +1,7 @@
 key: htmlTabset
 title: Tabsets
 description: Transform headers into tabs
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-tab
 enabledDefault: true
 dependsOn: htmlCore

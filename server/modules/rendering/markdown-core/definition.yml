@@ -1,7 +1,7 @@
 key: markdownCore
 title: Core
 description: Basic Markdown Parser
-author: requarks.io
+author: charnlee.wiki
 input: markdown
 output: html
 icon: mdi-language-markdown

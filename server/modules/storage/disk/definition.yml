@@ -1,9 +1,9 @@
 key: disk
 title: Local File System
 description: Local storage on disk or network shares.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/local-fs.svg
-website: https://wiki.js.org
+website: https://charnlee.art
 isAvailable: true
 supportedModes:
   - push

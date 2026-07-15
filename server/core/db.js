@@ -111,8 +111,8 @@ module.exports = {
         dbClient = 'mssql'
 
         if (_.isPlainObject(dbConfig)) {
-          dbConfig.appName = 'Wiki.js'
-          _.set(dbConfig, 'options.appName', 'Wiki.js')
+          dbConfig.appName = 'charnlee.wiki'
+          _.set(dbConfig, 'options.appName', 'charnlee.wiki')
 
           dbConfig.enableArithAbort = true
           _.set(dbConfig, 'options.enableArithAbort', true)
@@ -144,7 +144,7 @@ module.exports = {
           // -> Set Connection App Name
           switch (WIKI.config.db.type) {
             case 'postgres':
-              await conn.query(`set application_name = 'Wiki.js'`)
+              await conn.query(`set application_name = 'charnlee.wiki'`)
               // -> Set schema if it's not public
               if (WIKI.config.db.schema && WIKI.config.db.schema !== 'public') {
                 await conn.query(`set search_path TO ${WIKI.config.db.schema}, public;`)

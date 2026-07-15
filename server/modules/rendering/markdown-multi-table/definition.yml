@@ -1,7 +1,7 @@
 key: markdownMultiTable
 title: MultiMarkdown Table
 description: Add MultiMarkdown table support
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-table
 enabledDefault: false
 dependsOn: markdownCore

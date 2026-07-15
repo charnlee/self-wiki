@@ -1,7 +1,7 @@
 key: markdownKatex
 title: Katex
 description: LaTeX Math + Chemical Expression Typesetting Renderer
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-math-integral
 enabledDefault: true
 dependsOn: markdownCore

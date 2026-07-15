@@ -18,7 +18,7 @@ const randomBytesAsync = require('util').promisify(crypto.randomBytes)
 module.exports = () => {
   WIKI.config.site = {
     path: '',
-    title: 'Wiki.js'
+    title: 'charnlee.wiki'
   }
 
   WIKI.system = require('./core/system')
@@ -133,7 +133,8 @@ module.exports = () => {
         injectHead: '',
         injectBody: ''
       })
-      _.set(WIKI.config, 'title', 'Wiki.js')
+      _.set(WIKI.config, 'logoUrl', '/_assets/favicons/favicon.svg')
+      _.set(WIKI.config, 'title', 'charnlee.wiki')
 
       // Init Telemetry
       WIKI.kernel.initTelemetry()
@@ -183,6 +184,7 @@ module.exports = () => {
         'host',
         'lang',
         'logo',
+        'logoUrl',
         'mail',
         'seo',
         'sessionSecret',
@@ -361,7 +363,7 @@ module.exports = () => {
 
       WIKI.logger.info('Stopping Setup...')
       WIKI.server.destroy(() => {
-        WIKI.logger.info('Setup stopped. Starting Wiki.js...')
+        WIKI.logger.info('Setup stopped. Starting charnlee.wiki...')
         _.delay(() => {
           WIKI.kernel.bootMaster()
         }, 1000)

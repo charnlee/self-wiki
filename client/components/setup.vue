@@ -7,14 +7,14 @@
             v-card.elevation-20.radius-7.animated.fadeInUp
               v-alert(v-if='isDevMode', tile, dark, color='red darken-3', icon='mdi-alert', prominent)
                 .body-2 You are running an unstable, unreleased development version. This code base is #[strong NOT] for production use!
-                .body-2.mt-3 Cloning the dev branch directly from GitHub is #[strong NOT] the proper way to install Wiki.js!
-                .body-2 Read the #[a(href='https://docs.requarks.io/install', style='color: #FFF;') documentation] on correctly installing the latest stable version.
+                .body-2.mt-3 This development build is intended for local testing only.
+                .body-2 Use a production build before publishing changes online.
               .text-center
-                img.setup-logo.animated.fadeInUp.wait-p2s(src='/_assets/svg/logo-wikijs-full.svg', alt='Wiki.js Logo')
+                img.setup-logo.animated.fadeInUp.wait-p2s(src='/_assets/favicons/favicon.svg', alt='charnlee.wiki')
               v-alert(v-model='error', type='error', icon='mdi-alert', tile, dismissible) {{ errorMessage }}
               v-alert(v-if='!error', tile, color='blue lighten-5', :value='true')
                 v-icon.mr-3(color='blue') mdi-package-variant
-                span.blue--text You are about to install Wiki.js #[strong {{wikiVersion}}].
+                span.blue--text You are about to install charnlee.wiki #[strong {{wikiVersion}}].
               v-card-text
                 .overline.pl-3 Administrator Account
                 v-container.pa-3.mt-3(grid-list-xl)
@@ -74,9 +74,9 @@
                   v-model='conf.telemetry',
                   label='Allow Telemetry',
                   persistent-hint,
-                  hint='Help Wiki.js developers improve this app with anonymized telemetry.'
+                  hint='Share anonymized technical diagnostics to help improve this app.'
                 )
-                a.pl-3(style='font-size: 12px; letter-spacing: initial;', href='https://docs.requarks.io/telemetry', target='_blank') Learn more
+                span.pl-3(style='font-size: 12px; letter-spacing: initial;') Optional diagnostics
               v-divider.mt-2
               v-card-actions
                 v-btn(color='primary', @click='install', :disabled='loading', x-large, depressed, block)

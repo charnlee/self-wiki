@@ -1,7 +1,7 @@
 key: htmlAsciinema
 title: Asciinema
 description: Embed asciinema players from compatible links
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-theater
 enabledDefault: false
 dependsOn: htmlCore

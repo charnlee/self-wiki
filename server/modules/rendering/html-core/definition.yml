@@ -1,7 +1,7 @@
 key: htmlCore
 title: Core
 description: Basic HTML Parser
-author: requarks.io
+author: charnlee.wiki
 input: html
 output: html
 icon: mdi-language-html5

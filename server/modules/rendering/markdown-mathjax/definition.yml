@@ -1,7 +1,7 @@
 key: markdownMathjax
 title: Mathjax
 description: LaTeX Math + Chemical Expression Typesetting Renderer
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-math-integral
 enabledDefault: false
 dependsOn: markdownCore

@@ -1,7 +1,7 @@
 key: htmlImagePrefetch
 title: Image Prefetch
 description: Prefetch remotely rendered images (kroki/plantuml)
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-cloud-download-outline
 enabledDefault: false
 dependsOn: htmlCore

@@ -1,6 +1,6 @@
 name: Default
-author: requarks.io
-site: https://wiki.requarks.io/
+author: charnlee.wiki
+site: https://charnlee.art/
 version: 1.0.0
 requirements:
   minimum: '>= 2.0.0'
@@ -48,4 +48,3 @@ props:
     title: Display the Edit Speed Dial
     hint: Shown in the lower right corner of the page.
     order: 7
-

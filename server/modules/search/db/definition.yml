@@ -1,8 +1,8 @@
 key: db
 title: Database - Basic
 description: Default basic database-based search engine.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/database.svg
-website: https://www.requarks.io/
+website: https://charnlee.art/
 isAvailable: true
 props: {}

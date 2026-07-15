@@ -5,9 +5,9 @@
     v-card-text
       .text-center
         img.animated.fadeInUp.wait-p1s(src='/_assets/svg/icon-software.svg')
-        .body-2 Import from Wiki.js 1.x
+        .body-2 Import from legacy wiki
       v-divider.my-4
-      .body-2 Data from a Wiki.js 1.x installation can easily be imported using this tool. What do you want to import?
+      .body-2 Data from a legacy wiki installation can be imported using this tool. What do you want to import?
       v-checkbox(
         label='Content + Uploads'
         value='content'
@@ -108,7 +108,7 @@
                 outlined
                 hide-details
               )
-              .caption.mt-2 This folder should be empty or not exist yet. #[strong.deep-orange--text.text--darken-2 DO NOT] point to your existing Wiki.js 1.x repository folder. In most cases, it should be left to the default value.
+              .caption.mt-2 This folder should be empty or not exist yet. #[strong.deep-orange--text.text--darken-2 DO NOT] point to your existing legacy repository folder. In most cases, it should be left to the default value.
           v-alert(color='deep-orange', outlined, icon='mdi-alert', prominent)
             .body-2 - Note that if you already configured the git storage module, its configuration will be replaced with the above.
             .body-2 - Although both v1 and v2 installations can use the same remote git repository, you shouldn't make edits to the same pages simultaneously.
@@ -121,12 +121,12 @@
             template(v-slot:label)
               div
                 span Import from local folder
-                .caption: em Choose this option only if you didn't have git configured in your Wiki.js 1.x installation.
+                .caption: em Choose this option only if you didn't have git configured in your legacy installation.
         .pl-8.mt-5(v-if='needDisk')
           v-text-field(
             outlined
             label='Content Repo Path'
-            hint='The absolute path to where the Wiki.js 1.x content is stored on disk.'
+            hint='The absolute path to where the legacy content is stored on disk.'
             persistent-hint
             v-model='contentPath'
           )
@@ -144,7 +144,7 @@
         v-text-field(
           outlined
           label='MongoDB Connection String'
-          hint='The connection string to connect to the Wiki.js 1.x MongoDB database.'
+          hint='The connection string to connect to the legacy MongoDB database.'
           persistent-hint
           v-model='dbConnStr'
         )
@@ -197,7 +197,7 @@
             color='#FFF'
             style='margin: 0 auto;'
           )
-          .mt-5.body-1.white--text Importing from Wiki.js 1.x...
+          .mt-5.body-1.white--text Importing from legacy wiki...
           .caption Please wait
           v-progress-linear.mt-5(
             color='white'

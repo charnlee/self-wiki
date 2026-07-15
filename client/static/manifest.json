@@ -1,8 +1,18 @@
 {
-  "name": "Wiki.js",
-  "short_name": "Wiki.js",
+  "name": "charnlee.wiki",
+  "short_name": "charnlee.wiki",
   "start_url": "/",
   "icons": [
+      {
+          "src": "/_assets/favicons/favicon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+      },
+      {
+          "src": "/_assets/favicons/charnlee-wiki-logo.png",
+          "sizes": "512x512",
+          "type": "image/png"
+      },
       {
           "src": "/_assets/favicons/android-chrome-192x192.png",
           "sizes": "192x192",

@@ -1,7 +1,7 @@
 key: htmlTwemoji
 title: Twemoji
 description: Apply Twitter Emojis to all Unicode emojis
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-emoticon-happy-outline
 enabledDefault: true
 dependsOn: htmlCore

@@ -24,7 +24,7 @@
           v-toolbar(color='grey darken-3', dark, dense, flat)
             .body-2 {{$t('common:pageSelector.virtualFolders')}}
             v-spacer
-            v-btn(icon, tile, href='https://docs.requarks.io/guide/pages#folders', target='_blank')
+            v-btn(icon, tile, href='https://charnlee.art', target='_blank')
               v-icon mdi-help-box
           div(style='height:400px;')
             vue-scroll(:ops='scrollStyle')

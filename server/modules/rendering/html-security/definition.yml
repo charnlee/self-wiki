@@ -1,7 +1,7 @@
 key: htmlSecurity
 title: Security
 description: Filter and strips potentially dangerous content
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-fire
 enabledDefault: true
 dependsOn: htmlCore

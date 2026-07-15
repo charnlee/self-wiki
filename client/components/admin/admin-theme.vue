@@ -140,7 +140,7 @@ export default {
     return {
       loading: false,
       themes: [
-        { text: 'Default', author: 'requarks.io', value: 'default', isInstalled: true, installDate: '', updatedAt: '' }
+        { text: 'Default', author: 'charnlee.wiki', value: 'default', isInstalled: true, installDate: '', updatedAt: '' }
       ],
       iconsets: [
         { text: 'Material Design Icons (default)', value: 'mdi' },

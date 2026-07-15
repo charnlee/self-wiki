@@ -1,7 +1,7 @@
 key: bugsnag
 title: Bugsnag
 description: Bugsnag monitors apps for errors that impact customers & reports all diagnostic data.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/bugsnag.svg
 website: https://www.bugsnag.com/
 defaultLevel: warn

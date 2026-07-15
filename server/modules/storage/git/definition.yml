@@ -1,7 +1,7 @@
 key: git
 title: Git
 description: Git is a version control system for tracking changes in computer files and coordinating work on those files among multiple people.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/git-alt.svg
 website: https://git-scm.com/
 isAvailable: true

@@ -1,7 +1,7 @@
 key: sftp
 title: SFTP
 description: SFTP (SSH File Transfer Protocol) is a secure file transfer protocol. It runs over the SSH protocol. It supports the full security and authentication functionality of SSH.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/ssh.svg
 website: https://www.ssh.com/ssh/sftp
 isAvailable: true

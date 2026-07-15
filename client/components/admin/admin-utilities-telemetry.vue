@@ -5,7 +5,7 @@
     v-form
       v-card-text
         .subtitle-2 What is telemetry?
-        .body-2.mt-3 Telemetry allows the developers of Wiki.js to improve the software by collecting basic anonymized data about its usage and the host info. #[br] This is entirely optional and #[strong absolutely no] private data (such as content or personal data) is collected.
+        .body-2.mt-3 Telemetry allows charnlee.wiki to improve the software by collecting basic anonymized data about its usage and the host info. #[br] This is entirely optional and #[strong absolutely no] private data (such as content or personal data) is collected.
         .body-2.mt-3 For maximum privacy, a random client ID is generated during setup. This ID is used to group requests together while keeping complete anonymity. You can reset and generate a new one below at any time.
         v-divider.my-4
         .subtitle-2 What is collected?
@@ -14,7 +14,7 @@
           v-list-item
             v-list-item-avatar: v-icon mdi-information-outline
             v-list-item-content
-              v-list-item-title.body-2 Version of Wiki.js installed
+              v-list-item-title.body-2 Version of charnlee.wiki installed
               v-list-item-subtitle.caption: em e.g. v2.0.123
           v-list-item
             v-list-item-avatar: v-icon mdi-information-outline
@@ -34,7 +34,7 @@
         .body-2 Note that crash debug data is stored for a maximum of 30 days while analytics are stored for a maximum of 16 months, after which it is permanently deleted.
         v-divider.my-4
         .subtitle-2 What is it used for?
-        .body-2.mt-3 Telemetry is used by developers to improve Wiki.js, mostly for the following reasons:
+        .body-2.mt-3 Telemetry is used to improve charnlee.wiki, mostly for the following reasons:
         v-list(dense)
           v-list-item
             v-list-item-avatar: v-icon mdi-chevron-right
@@ -45,7 +45,7 @@
           v-list-item
             v-list-item-avatar: v-icon mdi-chevron-right
             v-list-item-content: v-list-item-title: .body-2  Optimize performance and testing scenarios based on most popular environments.
-        .body-2 Only authorized developers have access to the data. It is not shared to any 3rd party nor is it used for any other application than improving Wiki.js.
+        .body-2 Only authorized maintainers have access to the data. It is not shared to any 3rd party nor is it used for any other application than improving charnlee.wiki.
         v-divider.my-4
         .subtitle-2 Settings
         .mt-3
@@ -53,7 +53,7 @@
             v-model='telemetry',
             label='Enable Telemetry',
             color='primary',
-            hint='Allow Wiki.js to transmit telemetry data.',
+            hint='Allow charnlee.wiki to transmit telemetry data.',
             persistent-hint
           )
         v-divider.my-4

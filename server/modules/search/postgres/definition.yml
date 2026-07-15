@@ -1,9 +1,9 @@
 key: postgres
 title: Database - PostgreSQL
 description: Advanced PostgreSQL-based search engine.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/postgresql.svg
-website: https://www.requarks.io/
+website: https://charnlee.art/
 isAvailable: true
 props:
   dictLanguage:

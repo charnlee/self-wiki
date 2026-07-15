@@ -1,8 +1,8 @@
 key: disk
 title: Log Files
 description: Outputs log files on local disk.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/local-fs.svg
-website: https://wiki.js.org
+website: https://charnlee.art
 defaultLevel: info
 props: {}

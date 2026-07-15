@@ -192,7 +192,7 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin(),
     new VuetifyLoaderPlugin(),
-    new webpack.BannerPlugin('Wiki.js - wiki.js.org - Licensed under AGPL'),
+    new webpack.BannerPlugin('charnlee.wiki - Licensed under AGPL'),
     new MomentTimezoneDataPlugin({
       startYear: 2017,
       endYear: (new Date().getFullYear()) + 5

@@ -1,8 +1,8 @@
 key: syslog
 title: Syslog
 description: Syslog is a way for network devices to send event messages to a logging server.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/syslog.svg
-website: https://wiki.js.org
+website: https://charnlee.art
 defaultLevel: warn
 props: {}

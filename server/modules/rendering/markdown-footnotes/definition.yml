@@ -1,7 +1,7 @@
 key: markdownFootnotes
 title: Footnotes
 description: Parse footnotes references
-author: requarks.io
+author: charnlee.wiki
 icon: mdi-page-layout-footer
 enabledDefault: true
 dependsOn: markdownCore

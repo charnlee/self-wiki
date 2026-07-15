@@ -116,7 +116,7 @@ module.exports = {
           // -> Connect to DB
 
           const client = await MongoClient.connect(args.mongoDbConnString, {
-            appname: `Wiki.js ${WIKI.version} Migration Tool`
+            appname: `charnlee.wiki ${WIKI.version} Migration Tool`
           })
           const dbUsers = client.db().collection('users')
           const userCursor = dbUsers.find({ email: { '$ne': 'guest' } })

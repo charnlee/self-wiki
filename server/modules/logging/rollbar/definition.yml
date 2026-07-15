@@ -1,7 +1,7 @@
 key: rollbar
 title: Rollbar
 description: Rollbar provides real-time error alerting & debugging tools for developers.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/rollbar.svg
 website: https://rollbar.com/
 defaultLevel: warn

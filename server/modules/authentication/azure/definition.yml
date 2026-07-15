@@ -1,7 +1,7 @@
 key: azure
 title: Azure Active Directory
 description: Azure Active Directory (Azure AD) is Microsoft’s multi-tenant, cloud-based directory, and identity management service that combines core directory services, application access management, and identity protection into a single solution.
-author: requarks.io
+author: charnlee.wiki
 logo: https://static.requarks.io/logo/azure.svg
 color: blue darken-3
 website: https://azure.microsoft.com/services/active-directory/
