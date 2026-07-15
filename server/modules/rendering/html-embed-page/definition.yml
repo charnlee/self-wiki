@@ -1,0 +1,16 @@
+key: htmlEmbedPage
+title: HTML Page Embed
+description: Render pasted full HTML documents as isolated inline pages
+author: charnlee
+icon: mdi-application-brackets-outline
+enabledDefault: true
+dependsOn: htmlCore
+step: post
+order: 100000
+props:
+  defaultHeight:
+    type: Number
+    title: Default Height
+    default: 1200
+    hint: Default iframe height for embedded full HTML documents.
+    order: 1

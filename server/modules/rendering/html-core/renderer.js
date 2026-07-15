@@ -5,14 +5,22 @@ const pageHelper = require('../../../helpers/page')
 const URL = require('url').URL
 
 const mustacheRegExp = /(\{|&#x7b;?){2}(.+?)(\}|&#x7d;?){2}/i
+const fullHtmlDocumentRegExp = /(?:<!doctype\s+html|<html[\s>]|<head[\s>]|<body[\s>])/i
 
 /* global WIKI */
 
 module.exports = {
   async render() {
-    let $ = cheerio.load(this.input, {
+    const isFullHtmlDocument = fullHtmlDocumentRegExp.test(this.input || '')
+    let $ = isFullHtmlDocument ? cheerio.load('<wiki-html-embed></wiki-html-embed>', {
+      decodeEntities: true
+    }) : cheerio.load(this.input, {
       decodeEntities: true
     })
+
+    if (isFullHtmlDocument) {
+      $('wiki-html-embed').attr('data-srcdoc-b64', Buffer.from(this.input, 'utf8').toString('base64'))
+    }
 
     if ($.root().children().length < 1) {
       return ''
