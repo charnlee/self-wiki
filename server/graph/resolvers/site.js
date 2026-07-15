@@ -1,5 +1,6 @@
 const graphHelper = require('../../helpers/graph')
 const _ = require('lodash')
+const aiTagging = require('../../helpers/ai-tagging')
 
 /* global WIKI */
 
@@ -20,6 +21,9 @@ module.exports = {
         footerOverride: WIKI.config.footerOverride,
         logoUrl: WIKI.config.logoUrl,
         pageExtensions: WIKI.config.pageExtensions.join(', '),
+        aiTagBaseUrl: _.get(WIKI.config, 'aiTagging.baseUrl', aiTagging.DEFAULT_BASE_URL),
+        aiTagApiKey: _.get(WIKI.config, 'aiTagging.apiKey', ''),
+        aiTagModel: _.get(WIKI.config, 'aiTagging.model', aiTagging.DEFAULT_MODEL),
         ...WIKI.config.seo,
         ...WIKI.config.editShortcuts,
         ...WIKI.config.features,
@@ -71,6 +75,12 @@ module.exports = {
 
         if (args.hasOwnProperty('pageExtensions')) {
           WIKI.config.pageExtensions = _.trim(args.pageExtensions).split(',').map(p => p.trim().toLowerCase()).filter(p => p !== '')
+        }
+
+        WIKI.config.aiTagging = {
+          baseUrl: aiTagging.normalizeBaseUrl(_.get(args, 'aiTagBaseUrl', _.get(WIKI.config, 'aiTagging.baseUrl', aiTagging.DEFAULT_BASE_URL))),
+          apiKey: _.trim(_.get(args, 'aiTagApiKey', _.get(WIKI.config, 'aiTagging.apiKey', ''))),
+          model: _.trim(_.get(args, 'aiTagModel', _.get(WIKI.config, 'aiTagging.model', aiTagging.DEFAULT_MODEL))) || aiTagging.DEFAULT_MODEL
         }
 
         WIKI.config.seo = {
@@ -125,7 +135,7 @@ module.exports = {
           forceDownload: _.get(args, 'uploadForceDownload', WIKI.config.uploads.forceDownload)
         }
 
-        await WIKI.configSvc.saveToDb(['host', 'title', 'company', 'contentLicense', 'footerOverride', 'seo', 'logoUrl', 'pageExtensions', 'auth', 'editShortcuts', 'features', 'security', 'uploads'])
+        await WIKI.configSvc.saveToDb(['host', 'title', 'company', 'contentLicense', 'footerOverride', 'seo', 'logoUrl', 'pageExtensions', 'aiTagging', 'auth', 'editShortcuts', 'features', 'security', 'uploads'])
 
         if (WIKI.config.security.securityTrustProxy) {
           WIKI.app.enable('trust proxy')
@@ -138,6 +148,26 @@ module.exports = {
         }
       } catch (err) {
         return graphHelper.generateError(err)
+      }
+    },
+    async detectAiTagModels (obj, args, context) {
+      try {
+        const config = aiTagging.getConfig({
+          aiTagging: {
+            baseUrl: args.baseUrl || _.get(WIKI.config, 'aiTagging.baseUrl', aiTagging.DEFAULT_BASE_URL),
+            apiKey: args.apiKey || _.get(WIKI.config, 'aiTagging.apiKey', '')
+          }
+        })
+        const models = await aiTagging.listModels(config)
+        return {
+          responseResult: graphHelper.generateSuccess(`Detected ${models.length} models.`),
+          models
+        }
+      } catch (err) {
+        return {
+          ...graphHelper.generateError(err),
+          models: []
+        }
       }
     }
   }

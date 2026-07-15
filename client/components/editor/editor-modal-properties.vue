@@ -68,7 +68,23 @@
                     )
           v-divider
           v-card-text.grey.pt-5(:class='$vuetify.theme.dark ? `darken-3-d5` : `lighten-4`')
-            .overline.pb-5 {{$t('editor:props.categorization')}}
+            .d-flex.align-center.pb-5
+              .overline {{$t('editor:props.categorization')}}
+              v-spacer
+              v-tooltip(bottom)
+                template(v-slot:activator='{ on }')
+                  v-btn.ai-tag-btn(
+                    small
+                    outlined
+                    color='primary'
+                    :loading='aiTagsLoading'
+                    :disabled='aiTagsLoading'
+                    @click='suggestTags'
+                    v-on='on'
+                    )
+                    v-icon(left, small) mdi-auto-fix
+                    span AI 推荐标签
+                span 根据标题和正文自动生成标签
             v-chip-group.radius-5.mb-5(column, v-if='tags && tags.length > 0')
               v-chip(
                 v-for='tag of tags'
@@ -273,6 +289,7 @@ export default {
       newTag: '',
       newTagSuggestions: [],
       newTagSearch: '',
+      aiTagsLoading: false,
       currentTab: 0,
       cm: null,
       rules: {
@@ -301,6 +318,9 @@ export default {
     scriptCss: sync('page/scriptCss'),
     hasScriptPermission: get('page/effectivePermissions@pages.script'),
     hasStylePermission: get('page/effectivePermissions@pages.style'),
+    editorContent () {
+      return this.$store.get('editor/content') || ''
+    },
     pageSelectorMode () {
       return (this.mode === 'create') ? 'create' : 'move'
     }
@@ -346,6 +366,62 @@ export default {
   methods: {
     removeTag (tag) {
       this.tags = _.without(this.tags, tag)
+    },
+    async suggestTags () {
+      this.aiTagsLoading = true
+      try {
+        const resp = await this.$apollo.mutate({
+          mutation: gql`
+            mutation (
+              $title: String!
+              $description: String
+              $content: String!
+              $locale: String
+              $existingTags: [String!]
+            ) {
+              pages {
+                suggestTags(
+                  title: $title
+                  description: $description
+                  content: $content
+                  locale: $locale
+                  existingTags: $existingTags
+                ) {
+                  responseResult {
+                    succeeded
+                    message
+                  }
+                  tags
+                }
+              }
+            }
+          `,
+          variables: {
+            title: this.title || '',
+            description: this.description || '',
+            content: this.editorContent || '',
+            locale: this.locale,
+            existingTags: this.tags || []
+          }
+        })
+        const result = _.get(resp, 'data.pages.suggestTags')
+        if (_.get(result, 'responseResult.succeeded', false)) {
+          const currentTags = this.tags || []
+          const mergedTags = _.uniq([...currentTags, ..._.get(result, 'tags', [])])
+          const addedCount = mergedTags.length - currentTags.length
+          this.tags = mergedTags
+          this.$store.commit('showNotification', {
+            message: addedCount > 0 ? `已添加 ${addedCount} 个 AI 推荐标签` : 'AI 没有发现新的标签',
+            style: addedCount > 0 ? 'success' : 'warning',
+            icon: 'check'
+          })
+        } else {
+          this.$store.commit('pushGraphError', new Error(_.get(result, 'responseResult.message')))
+        }
+      } catch (err) {
+        this.$store.commit('pushGraphError', err)
+      }
+      this.aiTagsLoading = false
     },
     close() {
       this.isShown = false

@@ -1,7 +1,25 @@
 const _ = require('lodash')
 const graphHelper = require('../../helpers/graph')
+const aiTagging = require('../../helpers/ai-tagging')
 
 /* global WIKI */
+
+const cleanSuggestedTag = tag => {
+  return _.trim(tag || '')
+    .replace(/^#+/, '')
+    .replace(/[#/\\?&=;:"'<>[\]{}()!%@`~^*$,]/g, '')
+    .replace(/\s+/g, '-')
+    .toLowerCase()
+}
+
+const normalizeSuggestedTags = tags => {
+  return _.chain(tags)
+    .map(cleanSuggestedTag)
+    .filter(tag => tag.length > 0 && tag.length <= 32)
+    .uniq()
+    .take(8)
+    .value()
+}
 
 module.exports = {
   Query: {
@@ -422,6 +440,70 @@ module.exports = {
         }
       } catch (err) {
         return graphHelper.generateError(err)
+      }
+    },
+    /**
+     * SUGGEST TAGS
+     */
+    async suggestTags (obj, args, context) {
+      try {
+        const providerConfig = aiTagging.getConfig(WIKI.config)
+
+        const content = _.truncate(_.trim(args.content || ''), {
+          length: 12000,
+          omission: '\n\n[Content truncated]'
+        })
+        if (!content && !args.title && !args.description) {
+          throw new Error('Add a title or article content before generating tags.')
+        }
+
+        const resp = await aiTagging.createTagCompletion({
+          ...providerConfig,
+          messages: [
+            {
+              role: 'system',
+              content: [
+                'You generate concise wiki article tags.',
+                'Return only valid JSON in this exact shape: {"tags":["tag-one","tag-two"]}.',
+                'Return 3 to 8 highly relevant tags.',
+                'Prefer the article language when possible.',
+                'Use short noun phrases, no hashtags, no duplicates.'
+              ].join(' ')
+            },
+            {
+              role: 'user',
+              content: JSON.stringify({
+                title: args.title || '',
+                description: args.description || '',
+                locale: args.locale || WIKI.config.lang.code,
+                existingTags: args.existingTags || [],
+                content
+              })
+            }
+          ]
+        })
+
+        let parsed
+        try {
+          parsed = aiTagging.parseJsonText(aiTagging.extractChatText(resp))
+        } catch (err) {
+          throw new Error('AI tag response could not be parsed.')
+        }
+
+        const tags = normalizeSuggestedTags(parsed.tags)
+        if (tags.length < 1) {
+          throw new Error('AI did not return usable tags.')
+        }
+
+        return {
+          responseResult: graphHelper.generateSuccess('AI tags generated successfully.'),
+          tags
+        }
+      } catch (err) {
+        return {
+          ...graphHelper.generateError(err),
+          tags: []
+        }
       }
     },
     /**

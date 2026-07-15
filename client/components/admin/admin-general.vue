@@ -173,6 +173,50 @@
                   //-   disabled
                   //-   )
 
+              v-card.mt-5.animated.fadeInUp.wait-p5s
+                v-toolbar(color='primary', dark, dense, flat)
+                  v-toolbar-title.subtitle-1 AI 自动打标
+                v-card-text
+                  v-text-field(
+                    outlined
+                    label='API Base URL'
+                    v-model='config.aiTagBaseUrl'
+                    prepend-icon='mdi-api'
+                    persistent-hint
+                    hint='OpenAI 兼容接口地址，例如 https://api.openai.com/v1'
+                    )
+                  v-text-field.mt-3(
+                    outlined
+                    label='API Key'
+                    v-model='config.aiTagApiKey'
+                    prepend-icon='mdi-key-variant'
+                    :append-icon='showAiTagApiKey ? `mdi-eye-off` : `mdi-eye`'
+                    :type='showAiTagApiKey ? `text` : `password`'
+                    persistent-hint
+                    hint='用于检测模型和文章标签推荐，会保存到服务端配置数据库。'
+                    @click:append='showAiTagApiKey = !showAiTagApiKey'
+                    )
+                  .d-flex.align-center.mt-3.mb-3
+                    v-btn(
+                      outlined
+                      color='primary'
+                      :loading='detectAiTagModelsLoading'
+                      :disabled='detectAiTagModelsLoading || !config.aiTagBaseUrl || !config.aiTagApiKey'
+                      @click='detectAiTagModels'
+                      )
+                      v-icon(left) mdi-cloud-search-outline
+                      span 检测可用模型
+                    .caption.grey--text.ml-3(v-if='aiTagModels.length > 0') 已检测到 {{ aiTagModels.length }} 个模型
+                  v-combobox(
+                    outlined
+                    label='OpenAI 模型'
+                    v-model='config.aiTagModel'
+                    :items='aiTagModels'
+                    prepend-icon='mdi-creation'
+                    persistent-hint
+                    hint='用于文章标签推荐的模型名称，可从检测结果选择，也可以手动输入。'
+                    )
+
               v-card.mt-5.animated.fadeInUp.wait-p6s
                 v-toolbar(color='primary', dark, dense, flat)
                   v-toolbar-title.subtitle-1 URL Handling
@@ -297,6 +341,9 @@ export default {
         featurePersonalWikis: false,
         featureTinyPNG: false,
         pageExtensions: '',
+        aiTagBaseUrl: 'https://api.openai.com/v1',
+        aiTagApiKey: '',
+        aiTagModel: 'gpt-5.6',
         editFab: false,
         editMenuBar: false,
         editMenuBtn: false,
@@ -310,6 +357,14 @@ export default {
         { text: 'Follow', value: 'follow' },
         { text: 'No Index', value: 'noindex' },
         { text: 'No Follow', value: 'nofollow' }
+      ],
+      detectAiTagModelsLoading: false,
+      showAiTagApiKey: false,
+      aiTagModels: [
+        'gpt-5.6',
+        'gpt-5.6-mini',
+        'gpt-5.6-nano',
+        'gpt-4.1-mini'
       ]
     }
   },
@@ -360,6 +415,9 @@ export default {
               $footerOverride: String
               $logoUrl: String
               $pageExtensions: String
+              $aiTagBaseUrl: String
+              $aiTagApiKey: String
+              $aiTagModel: String
               $featurePageRatings: Boolean
               $featurePageComments: Boolean
               $featurePersonalWikis: Boolean
@@ -384,6 +442,9 @@ export default {
                   footerOverride: $footerOverride
                   logoUrl: $logoUrl
                   pageExtensions: $pageExtensions
+                  aiTagBaseUrl: $aiTagBaseUrl
+                  aiTagApiKey: $aiTagApiKey
+                  aiTagModel: $aiTagModel
                   featurePageRatings: $featurePageRatings
                   featurePageComments: $featurePageComments
                   featurePersonalWikis: $featurePersonalWikis
@@ -417,6 +478,9 @@ export default {
             footerOverride: _.get(this.config, 'footerOverride', ''),
             logoUrl: _.get(this.config, 'logoUrl', ''),
             pageExtensions: _.get(this.config, 'pageExtensions', ''),
+            aiTagBaseUrl: _.get(this.config, 'aiTagBaseUrl', 'https://api.openai.com/v1'),
+            aiTagApiKey: _.get(this.config, 'aiTagApiKey', ''),
+            aiTagModel: _.get(this.config, 'aiTagModel', 'gpt-5.6'),
             featurePageRatings: _.get(this.config, 'featurePageRatings', false),
             featurePageComments: _.get(this.config, 'featurePageComments', false),
             featurePersonalWikis: _.get(this.config, 'featurePersonalWikis', false),
@@ -445,6 +509,47 @@ export default {
       } catch (err) {
         this.$store.commit('pushGraphError', err)
       }
+    },
+    async detectAiTagModels () {
+      this.detectAiTagModelsLoading = true
+      try {
+        const resp = await this.$apollo.mutate({
+          mutation: gql`
+            mutation ($baseUrl: String, $apiKey: String) {
+              site {
+                detectAiTagModels(baseUrl: $baseUrl, apiKey: $apiKey) {
+                  responseResult {
+                    succeeded
+                    message
+                  }
+                  models
+                }
+              }
+            }
+          `,
+          variables: {
+            baseUrl: _.get(this.config, 'aiTagBaseUrl', ''),
+            apiKey: _.get(this.config, 'aiTagApiKey', '')
+          }
+        })
+        const result = _.get(resp, 'data.site.detectAiTagModels')
+        if (_.get(result, 'responseResult.succeeded', false)) {
+          this.aiTagModels = _.get(result, 'models', [])
+          if (!this.config.aiTagModel && this.aiTagModels.length > 0) {
+            this.config.aiTagModel = this.aiTagModels[0]
+          }
+          this.$store.commit('showNotification', {
+            style: 'success',
+            message: `已检测到 ${this.aiTagModels.length} 个可用模型`,
+            icon: 'check'
+          })
+        } else {
+          this.$store.commit('pushGraphError', new Error(_.get(result, 'responseResult.message')))
+        }
+      } catch (err) {
+        this.$store.commit('pushGraphError', err)
+      }
+      this.detectAiTagModelsLoading = false
     },
     browseLogo () {
       this.$store.set('editor/editorKey', 'common')
@@ -479,6 +584,9 @@ export default {
               footerOverride
               logoUrl
               pageExtensions
+              aiTagBaseUrl
+              aiTagApiKey
+              aiTagModel
               featurePageRatings
               featurePageComments
               featurePersonalWikis

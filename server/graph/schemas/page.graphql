@@ -117,6 +117,14 @@ type PageMutation {
     title: String
   ): PageResponse @auth(requires: ["write:pages", "manage:pages", "manage:system"])
 
+  suggestTags(
+    title: String!
+    description: String
+    content: String!
+    locale: String
+    existingTags: [String!]
+  ): PageTagSuggestionResponse @auth(requires: ["write:pages", "manage:pages", "manage:system"])
+
   convert(
     id: Int!
     editor: String!
@@ -172,6 +180,11 @@ type PageMutation {
 type PageResponse {
   responseResult: ResponseStatus!
   page: Page
+}
+
+type PageTagSuggestionResponse {
+  responseResult: ResponseStatus!
+  tags: [String!]!
 }
 
 type PageMigrationResponse {

@@ -50,6 +50,10 @@ defaults:
       - md
       - html
       - txt
+    aiTagging:
+      baseUrl: https://api.openai.com/v1
+      apiKey: ''
+      model: gpt-5.6
     mail:
       host: ''
       secure: true

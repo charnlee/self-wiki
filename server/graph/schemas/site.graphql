@@ -35,6 +35,9 @@ type SiteMutation {
     footerOverride: String
     logoUrl: String
     pageExtensions: String
+    aiTagBaseUrl: String
+    aiTagApiKey: String
+    aiTagModel: String
     authAutoLogin: Boolean
     authEnforce2FA: Boolean
     authHideLocal: Boolean
@@ -67,6 +70,11 @@ type SiteMutation {
     uploadForceDownload: Boolean
 
   ): DefaultResponse @auth(requires: ["manage:system"])
+
+  detectAiTagModels(
+    baseUrl: String
+    apiKey: String
+  ): AiTagModelDetectionResponse @auth(requires: ["manage:system"])
 }
 
 # -----------------------------------------------
@@ -85,6 +93,9 @@ type SiteConfig {
   footerOverride: String
   logoUrl: String
   pageExtensions: String
+  aiTagBaseUrl: String
+  aiTagApiKey: String
+  aiTagModel: String
   authAutoLogin: Boolean
   authEnforce2FA: Boolean
   authHideLocal: Boolean
@@ -115,4 +126,9 @@ type SiteConfig {
   uploadMaxFiles: Int
   uploadScanSVG: Boolean
   uploadForceDownload: Boolean
+}
+
+type AiTagModelDetectionResponse {
+  responseResult: ResponseStatus!
+  models: [String!]!
 }
